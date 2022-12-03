@@ -3,7 +3,7 @@ use crate::solution::Solution;
 pub struct Day {}
 
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> () {
+    fn compute_1(&self, input: &str) {
         let snacks_by_elf = input
             .split("\n\n")
             .map(|chunk| {
@@ -20,10 +20,10 @@ impl Solution for Day {
             .max()
             .expect("no fattest elf?");
 
-        println!("Fattest elf: {}", fattest_elf)
+        println!("Fattest elf: {}", fattest_elf);
     }
 
-    fn compute_2(&self, input: &str) -> () {
+    fn compute_2(&self, input: &str) {
         let snacks_by_elf = input
             .split("\n\n")
             .map(|chunk| {
@@ -39,7 +39,7 @@ impl Solution for Day {
             .map(|snacks| snacks.iter().sum::<u32>())
             .collect::<Vec<u32>>();
 
-        calories_by_elf.sort();
+        calories_by_elf.sort_unstable();
         calories_by_elf.reverse();
 
         println!(
@@ -50,6 +50,6 @@ impl Solution for Day {
         println!(
             "Total calories by top 3: {}",
             calories_by_elf[0] + calories_by_elf[1] + calories_by_elf[2]
-        )
+        );
     }
 }

@@ -2,11 +2,11 @@ use std::collections::HashSet;
 
 use crate::solution::Solution;
 
-fn item_value(item: &char) -> u32 {
+fn item_value(item: char) -> u32 {
     let offset = if item.is_lowercase() { 96 } else { 38 };
-    let value = *item as u32;
+    let value = item as u32;
 
-    return value - offset;
+    value - offset
 }
 
 fn find_shared_item_simple(a: &str, b: &str) -> Option<char> {
@@ -23,15 +23,14 @@ fn find_shared_item_advanced(lines: &[&str]) -> Option<char> {
         .iter()
         .map(|line| line.chars().collect::<HashSet<char>>())
         .reduce(|acc, next| acc.intersection(&next).copied().collect::<HashSet<char>>())
-        .map(|set| set.iter().next().copied())
-        .flatten();
+        .and_then(|set| set.iter().next().copied());
 
     shared_item
 }
 
 pub struct Day {}
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> () {
+    fn compute_1(&self, input: &str) {
         let rucksack_value: u32 = input
             .lines()
             .map(|rucksack| {
@@ -40,14 +39,14 @@ impl Solution for Day {
                 let shared_item = find_shared_item_simple(compartment_1, compartment_2)
                     .expect("found no shared item");
 
-                item_value(&shared_item)
+                item_value(shared_item)
             })
             .sum();
 
         println!("Total sum of priorities: {}", rucksack_value);
     }
 
-    fn compute_2(&self, input: &str) -> () {
+    fn compute_2(&self, input: &str) {
         let rucksack_value: u32 = input
             .lines()
             .collect::<Vec<&str>>()
@@ -56,7 +55,7 @@ impl Solution for Day {
                 let shared_item =
                     find_shared_item_advanced(rucksacks).expect("found no shared item");
 
-                item_value(&shared_item)
+                item_value(shared_item)
             })
             .sum();
 

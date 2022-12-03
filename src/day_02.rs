@@ -1,5 +1,8 @@
 use crate::solution::Solution;
 
+use Hand::{Paper, Rock, Scissor};
+use Outcome::{Draw, Lose, Win};
+
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum Hand {
     Rock,
@@ -9,24 +12,20 @@ enum Hand {
 
 impl Hand {
     fn new(input: &str) -> Self {
-        use Hand::*;
-
-        return match input {
+        match input {
             "A" | "X" => Rock,
             "B" | "Y" => Paper,
             "C" | "Z" => Scissor,
             _ => panic!("invalid input"),
-        };
+        }
     }
 
-    fn value(&self) -> u32 {
-        use Hand::*;
-
-        return match self {
+    fn value(self) -> u32 {
+        match self {
             Rock => 1,
             Paper => 2,
             Scissor => 3,
-        };
+        }
     }
 }
 
@@ -39,8 +38,6 @@ enum Outcome {
 
 impl Outcome {
     fn new(input: &str) -> Self {
-        use Outcome::*;
-
         match input {
             "X" => Lose,
             "Y" => Draw,
@@ -49,42 +46,35 @@ impl Outcome {
         }
     }
 
-    fn value(&self) -> u32 {
-        use Outcome::*;
-
-        return match self {
+    fn value(self) -> u32 {
+        match self {
             Lose => 0,
             Draw => 3,
             Win => 6,
-        };
+        }
     }
 }
 
 fn calculate_fight(fight: (Hand, Hand)) -> u32 {
-    use Hand::*;
-
-    return match fight {
+    match fight {
         (Rock, Scissor) | (Paper, Rock) | (Scissor, Paper) => 6,
         (you, other) if you == other => 3,
         _ => 0,
-    };
+    }
 }
 
 fn find_hand(outcome: Outcome, hand: Hand) -> Hand {
-    use Hand::*;
-    use Outcome::*;
-
-    return match (outcome, hand) {
+    match (outcome, hand) {
         (Draw, _) => hand,
         (Win, Rock) | (Lose, Scissor) => Paper,
         (Win, Paper) | (Lose, Rock) => Scissor,
         (Win, Scissor) | (Lose, Paper) => Rock,
-    };
+    }
 }
 
 pub struct Day {}
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> () {
+    fn compute_1(&self, input: &str) {
         let total_score: u32 = input
             .lines()
             .map(|line| {
@@ -103,7 +93,7 @@ impl Solution for Day {
         println!("Total score: {}", total_score);
     }
 
-    fn compute_2(&self, input: &str) -> () {
+    fn compute_2(&self, input: &str) {
         let total_score: u32 = input
             .lines()
             .map(|line| {
