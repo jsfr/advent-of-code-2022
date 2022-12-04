@@ -74,7 +74,7 @@ fn find_hand(outcome: Outcome, hand: Hand) -> Hand {
 
 pub struct Day {}
 impl Solution for Day {
-    fn compute_1(&self, input: &str) {
+    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
         let total_score: u32 = input
             .lines()
             .map(|line| {
@@ -91,9 +91,11 @@ impl Solution for Day {
             .sum();
 
         println!("Total score: {}", total_score);
+
+        Ok(())
     }
 
-    fn compute_2(&self, input: &str) {
+    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
         let total_score: u32 = input
             .lines()
             .map(|line| {
@@ -110,5 +112,7 @@ impl Solution for Day {
             .sum();
 
         println!("Total score: {}", total_score);
+
+        Ok(())
     }
 }

@@ -1,55 +1,60 @@
+use anyhow::Context;
+
 use crate::solution::Solution;
 
 pub struct Day {}
 
 impl Solution for Day {
-    fn compute_1(&self, input: &str) {
+    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
         let snacks_by_elf = input
             .split("\n\n")
             .map(|chunk| {
                 chunk
                     .lines()
-                    .map(|line| line.parse::<u32>().expect("line is not a positive number"))
-                    .collect::<Vec<u32>>()
+                    .map(|line| {
+                        line.parse::<usize>()
+                            .context(format!("Failed to parse {line} as a usize"))
+                    })
+                    .collect::<anyhow::Result<Vec<_>>>()
             })
-            .collect::<Vec<Vec<u32>>>();
+            .collect::<anyhow::Result<Vec<Vec<_>>>>()?;
 
         let fattest_elf = snacks_by_elf
             .iter()
-            .map(|snacks| snacks.iter().sum::<u32>())
-            .max()
-            .expect("no fattest elf?");
+            .map(|snacks| snacks.iter().sum::<usize>())
+            .max();
 
-        println!("Fattest elf: {}", fattest_elf);
+        dbg!(fattest_elf);
+
+        Ok(())
     }
 
-    fn compute_2(&self, input: &str) {
+    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
         let snacks_by_elf = input
             .split("\n\n")
             .map(|chunk| {
                 chunk
                     .lines()
-                    .map(|line| line.parse::<u32>().expect("line is not a positive number"))
-                    .collect::<Vec<u32>>()
+                    .map(|line| {
+                        line.parse::<usize>()
+                            .context(format!("Failed to parse {line} as a usize"))
+                    })
+                    .collect::<anyhow::Result<Vec<usize>>>()
             })
-            .collect::<Vec<Vec<u32>>>();
+            .collect::<anyhow::Result<Vec<Vec<usize>>>>()?;
 
         let mut calories_by_elf = snacks_by_elf
             .iter()
-            .map(|snacks| snacks.iter().sum::<u32>())
-            .collect::<Vec<u32>>();
+            .map(|snacks| snacks.iter().sum::<usize>())
+            .collect::<Vec<usize>>();
 
         calories_by_elf.sort_unstable();
         calories_by_elf.reverse();
 
-        println!(
-            "Top 3 fatties: {}, {}, {}",
-            calories_by_elf[0], calories_by_elf[1], calories_by_elf[2]
-        );
+        let top_3_summed: usize = calories_by_elf.into_iter().take(3).sum();
 
-        println!(
-            "Total calories by top 3: {}",
-            calories_by_elf[0] + calories_by_elf[1] + calories_by_elf[2]
-        );
+        dbg!(top_3_summed);
+
+        Ok(())
     }
 }
