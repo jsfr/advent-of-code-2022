@@ -60,12 +60,12 @@ pub struct Day {}
 
 impl Solution for Day {
     fn compute_1(&self, input: &str) -> anyhow::Result<()> {
-        let intervals = input
+        let interval_pairs: Vec<Pair> = input
             .lines()
-            .map(|line| line.parse::<Pair>())
-            .collect::<anyhow::Result<Vec<_>>>()?;
+            .map(str::parse)
+            .collect::<anyhow::Result<_>>()?;
 
-        let contained_intervals = intervals
+        let contained_intervals = interval_pairs
             .into_iter()
             .filter(|Pair { first, second }| first.contains(second) || second.contains(first))
             .count();
@@ -76,10 +76,10 @@ impl Solution for Day {
     }
 
     fn compute_2(&self, input: &str) -> anyhow::Result<()> {
-        let intervals = input
+        let intervals: Vec<Pair> = input
             .lines()
-            .map(|line| line.parse::<Pair>())
-            .collect::<anyhow::Result<Vec<_>>>()?;
+            .map(str::parse)
+            .collect::<anyhow::Result<_>>()?;
 
         let overlapping_intervals = intervals
             .into_iter()
