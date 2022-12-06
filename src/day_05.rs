@@ -7,44 +7,42 @@ use crate::solution::Solution;
 
 pub struct Day {}
 
-struct Move {
+struct Instruction {
     quantity: usize,
     from: usize,
     to: usize,
 }
 
 #[derive(Debug)]
-struct Stacks {
-    stacks: Vec<Vec<char>>,
-}
+struct Stacks(Vec<Vec<char>>);
 
 impl Stacks {
-    fn move_one_at_a_time(&mut self, next_move: &Move) -> anyhow::Result<()> {
-        let Move { from, to, quantity } = *next_move;
+    fn apply_9000(&mut self, instruction: &Instruction) -> anyhow::Result<()> {
+        let Instruction { from, to, quantity } = *instruction;
 
         for _ in 1..=quantity {
-            let value = self
+            let krate = self
                 .stack(from)
                 .pop()
                 .context(format!("No crate to move at stack {from}"))?;
 
-            self.stack(to).push(value);
+            self.stack(to).push(krate);
         }
 
         Ok(())
     }
 
-    fn move_all_at_once(&mut self, next_move: &Move) {
-        let Move { from, to, quantity } = *next_move;
+    fn apply_9001(&mut self, instruction: &Instruction) {
+        let Instruction { from, to, quantity } = *instruction;
         let from_stack = self.stack(from);
         let split = from_stack.len() - quantity;
-        let mut values = from_stack.split_off(split);
+        let mut krates = from_stack.split_off(split);
 
-        self.stack(to).append(&mut values);
+        self.stack(to).append(&mut krates);
     }
 
-    fn all_tops(&self) -> Vec<char> {
-        self.stacks
+    fn top_crates(&self) -> Vec<char> {
+        self.0
             .iter()
             .filter_map(|stack| stack.last())
             .copied()
@@ -52,7 +50,7 @@ impl Stacks {
     }
 
     fn stack(&mut self, stack: usize) -> &mut Vec<char> {
-        &mut self.stacks[stack - 1]
+        &mut self.0[stack]
     }
 }
 
@@ -86,13 +84,11 @@ impl FromStr for Stacks {
             })
             .collect();
 
-        Ok(Self {
-            stacks: transposed_stacks,
-        })
+        Ok(Self(transposed_stacks))
     }
 }
 
-impl FromStr for Move {
+impl FromStr for Instruction {
     type Err = anyhow::Error;
 
     fn from_str(s: &str) -> anyhow::Result<Self> {
@@ -103,55 +99,55 @@ impl FromStr for Move {
 
         Ok(Self {
             quantity: cap[1].parse()?,
-            from: cap[2].parse()?,
-            to: cap[3].parse()?,
+            from: cap[2].parse::<usize>()? - 1,
+            to: cap[3].parse::<usize>()? - 1,
         })
     }
 }
 
 impl Solution for Day {
     fn compute_1(&self, input: &str) -> anyhow::Result<()> {
-        let (stacks, moves) = input
+        let (stacks, instructions) = input
             .split_once("\n\n")
-            .context("Failed to split in stacks and moves")?;
+            .context("Failed to split in stacks and instructions")?;
 
         let mut stacks: Stacks = stacks.parse()?;
 
-        let moves: Vec<Move> = moves
+        let instructions: Vec<Instruction> = instructions
             .lines()
             .map(str::parse)
             .collect::<anyhow::Result<_>>()?;
 
-        for next_move in moves {
-            stacks.move_one_at_a_time(&next_move)?;
+        for instruction in instructions {
+            stacks.apply_9000(&instruction)?;
         }
 
-        let all_tops: String = stacks.all_tops().iter().collect();
+        let answer: String = stacks.top_crates().iter().collect();
 
-        dbg!(all_tops);
+        dbg!(answer);
 
         Ok(())
     }
 
     fn compute_2(&self, input: &str) -> anyhow::Result<()> {
-        let (stacks, moves) = input
+        let (stacks, instructions) = input
             .split_once("\n\n")
-            .context("Failed to split in stacks and moves")?;
+            .context("Failed to split in stacks and instructions")?;
 
         let mut stacks: Stacks = stacks.parse()?;
 
-        let moves: Vec<Move> = moves
+        let instructions: Vec<Instruction> = instructions
             .lines()
             .map(str::parse)
             .collect::<anyhow::Result<_>>()?;
 
-        for next_move in moves {
-            stacks.move_all_at_once(&next_move);
+        for instruction in instructions {
+            stacks.apply_9001(&instruction);
         }
 
-        let all_tops: String = stacks.all_tops().iter().collect();
+        let answer: String = stacks.top_crates().iter().collect();
 
-        dbg!(all_tops);
+        dbg!(answer);
 
         Ok(())
     }

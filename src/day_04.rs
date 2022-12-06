@@ -65,12 +65,12 @@ impl Solution for Day {
             .map(str::parse)
             .collect::<anyhow::Result<_>>()?;
 
-        let contained_intervals = interval_pairs
+        let answer = interval_pairs
             .into_iter()
             .filter(|Pair { first, second }| first.contains(second) || second.contains(first))
             .count();
 
-        dbg!(contained_intervals);
+        dbg!(answer);
 
         Ok(())
     }
@@ -81,12 +81,12 @@ impl Solution for Day {
             .map(str::parse)
             .collect::<anyhow::Result<_>>()?;
 
-        let overlapping_intervals = intervals
+        let answer = intervals
             .into_iter()
             .filter(|Pair { first, second }| first.overlaps(second) || second.overlaps(first))
             .count();
 
-        dbg!(overlapping_intervals);
+        dbg!(answer);
 
         Ok(())
     }

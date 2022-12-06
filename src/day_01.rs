@@ -19,12 +19,13 @@ impl Solution for Day {
             })
             .collect::<anyhow::Result<Vec<Vec<_>>>>()?;
 
-        let fattest_elf = snacks_by_elf
+        let answer = snacks_by_elf
             .iter()
             .map(|snacks| snacks.iter().sum::<usize>())
-            .max();
+            .max()
+            .context("No fattest elf found")?;
 
-        dbg!(fattest_elf);
+        dbg!(answer);
 
         Ok(())
     }
@@ -51,9 +52,9 @@ impl Solution for Day {
         calories_by_elf.sort_unstable();
         calories_by_elf.reverse();
 
-        let top_3_summed: usize = calories_by_elf.into_iter().take(3).sum();
+        let answer: usize = calories_by_elf.into_iter().take(3).sum();
 
-        dbg!(top_3_summed);
+        dbg!(answer);
 
         Ok(())
     }

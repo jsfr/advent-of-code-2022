@@ -31,7 +31,7 @@ fn find_shared_item_advanced(lines: &[&str]) -> Option<char> {
 pub struct Day {}
 impl Solution for Day {
     fn compute_1(&self, input: &str) -> anyhow::Result<()> {
-        let rucksack_value: u32 = input
+        let answer: u32 = input
             .lines()
             .map(|rucksack| {
                 let mid = rucksack.len() / 2;
@@ -43,13 +43,13 @@ impl Solution for Day {
             })
             .sum();
 
-        println!("Total sum of priorities: {}", rucksack_value);
+        dbg!(answer);
 
         Ok(())
     }
 
     fn compute_2(&self, input: &str) -> anyhow::Result<()> {
-        let rucksack_value: u32 = input
+        let answer: u32 = input
             .lines()
             .collect::<Vec<&str>>()
             .chunks_exact(3)
@@ -61,7 +61,7 @@ impl Solution for Day {
             })
             .sum();
 
-        println!("Total sum of priorities: {}", rucksack_value);
+        dbg!(answer);
 
         Ok(())
     }
