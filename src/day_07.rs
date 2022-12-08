@@ -50,7 +50,7 @@ struct Directory {
 #[derive(Debug)]
 struct File {
     size: usize,
-    name: String,
+    _name: String,
 }
 
 impl Directory {
@@ -199,7 +199,7 @@ impl State {
                 })
             }
             ConsoleLine::Output(Output::File(size, name)) => {
-                self.get_current().files.push(File { size, name });
+                self.get_current().files.push(File { size, _name: name });
             }
         };
 
