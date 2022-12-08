@@ -5,6 +5,7 @@ mod day_04;
 mod day_05;
 mod day_06;
 mod day_07;
+mod day_08;
 mod solution;
 
 use std::fs::read_to_string;
@@ -52,6 +53,7 @@ fn get_day(day: &str) -> Option<Box<dyn Solution>> {
         "05" => Box::new(day_05::Day {}),
         "06" => Box::new(day_06::Day {}),
         "07" => Box::new(day_07::Day {}),
+        "08" => Box::new(day_08::Day {}),
         _ => return None,
     };
 
