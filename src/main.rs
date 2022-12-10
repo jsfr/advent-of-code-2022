@@ -9,6 +9,7 @@ mod day_08;
 mod day_09;
 mod day_10;
 mod solution;
+mod tests;
 
 use std::fs::read_to_string;
 
