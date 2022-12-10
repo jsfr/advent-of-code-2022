@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use anyhow::Context;
+use anyhow::{Context, Result};
 
 use crate::solution::Solution;
 
@@ -26,7 +26,7 @@ impl Interval {
 impl FromStr for Interval {
     type Err = anyhow::Error;
 
-    fn from_str(s: &str) -> anyhow::Result<Self> {
+    fn from_str(s: &str) -> Result<Self> {
         let (start, end) = s
             .split_once('-')
             .context(format!("Failed to parse interval {s}"))?;
@@ -45,7 +45,7 @@ struct Pair {
 impl FromStr for Pair {
     type Err = anyhow::Error;
 
-    fn from_str(s: &str) -> anyhow::Result<Self> {
+    fn from_str(s: &str) -> Result<Self> {
         let (first, second) = s
             .split_once(',')
             .context(format!("Failed to parse pair {s}"))?;
@@ -59,35 +59,25 @@ impl FromStr for Pair {
 pub struct Day {}
 
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
-        let interval_pairs: Vec<Pair> = input
-            .lines()
-            .map(str::parse)
-            .collect::<anyhow::Result<_>>()?;
+    fn compute_1(&self, input: &str) -> Result<String> {
+        let interval_pairs: Vec<Pair> = input.lines().map(str::parse).collect::<Result<_>>()?;
 
         let answer = interval_pairs
             .into_iter()
             .filter(|Pair { first, second }| first.contains(second) || second.contains(first))
             .count();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
-        let intervals: Vec<Pair> = input
-            .lines()
-            .map(str::parse)
-            .collect::<anyhow::Result<_>>()?;
+    fn compute_2(&self, input: &str) -> Result<String> {
+        let intervals: Vec<Pair> = input.lines().map(str::parse).collect::<Result<_>>()?;
 
         let answer = intervals
             .into_iter()
             .filter(|Pair { first, second }| first.overlaps(second) || second.overlaps(first))
             .count();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 }

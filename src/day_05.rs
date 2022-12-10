@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use anyhow::Context;
+use anyhow::{Context, Result};
 use regex::Regex;
 
 use crate::solution::Solution;
@@ -17,7 +17,7 @@ struct Instruction {
 struct Stacks(Vec<Vec<char>>);
 
 impl Stacks {
-    fn apply_9000(&mut self, instruction: &Instruction) -> anyhow::Result<()> {
+    fn apply_9000(&mut self, instruction: &Instruction) -> Result<()> {
         let Instruction { from, to, quantity } = *instruction;
 
         for _ in 1..=quantity {
@@ -57,7 +57,7 @@ impl Stacks {
 impl FromStr for Stacks {
     type Err = anyhow::Error;
 
-    fn from_str(s: &str) -> anyhow::Result<Self> {
+    fn from_str(s: &str) -> Result<Self> {
         let stacks: Vec<&str> = s.lines().rev().collect();
 
         let i = stacks[0].len();
@@ -91,7 +91,7 @@ impl FromStr for Stacks {
 impl FromStr for Instruction {
     type Err = anyhow::Error;
 
-    fn from_str(s: &str) -> anyhow::Result<Self> {
+    fn from_str(s: &str) -> Result<Self> {
         let re = Regex::new(r"^ *move +(\d+) +from +(\d+) +to +(\d+) *$")?;
         let cap = re
             .captures(s)
@@ -106,7 +106,7 @@ impl FromStr for Instruction {
 }
 
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_1(&self, input: &str) -> Result<String> {
         let (stacks, instructions) = input
             .split_once("\n\n")
             .context("Failed to split in stacks and instructions")?;
@@ -116,7 +116,7 @@ impl Solution for Day {
         let instructions: Vec<Instruction> = instructions
             .lines()
             .map(str::parse)
-            .collect::<anyhow::Result<_>>()?;
+            .collect::<Result<_>>()?;
 
         for instruction in instructions {
             stacks.apply_9000(&instruction)?;
@@ -124,12 +124,10 @@ impl Solution for Day {
 
         let answer: String = stacks.top_crates().iter().collect();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer)
     }
 
-    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_2(&self, input: &str) -> Result<String> {
         let (stacks, instructions) = input
             .split_once("\n\n")
             .context("Failed to split in stacks and instructions")?;
@@ -139,7 +137,7 @@ impl Solution for Day {
         let instructions: Vec<Instruction> = instructions
             .lines()
             .map(str::parse)
-            .collect::<anyhow::Result<_>>()?;
+            .collect::<Result<_>>()?;
 
         for instruction in instructions {
             stacks.apply_9001(&instruction);
@@ -147,8 +145,6 @@ impl Solution for Day {
 
         let answer: String = stacks.top_crates().iter().collect();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer)
     }
 }

@@ -34,11 +34,13 @@ fn main() -> anyhow::Result<()> {
     let input = read_to_string(&file).context(format!("Failed to read {file}"))?;
 
     if let Some(day) = get_day(day.as_str()) {
-        match part.as_str() {
+        let answer = match part.as_str() {
             "01" => day.compute_1(input.as_str())?,
             "02" => day.compute_2(input.as_str())?,
             _ => bail!("Part {part} was not found"),
-        }
+        };
+
+        println!("The answer is:\n{answer}");
     } else {
         bail!("Day {day} was not found");
     }

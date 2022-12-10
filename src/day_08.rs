@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use anyhow::Context;
+use anyhow::{Context, Result};
 
 use crate::solution::Solution;
 
@@ -30,10 +30,10 @@ impl FromStr for Forest {
     type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let trees: anyhow::Result<Vec<Vec<Tree>>> = s
+        let trees: Result<Vec<Vec<Tree>>> = s
             .lines()
             .map(|line| {
-                let line_of_trees: anyhow::Result<Vec<Tree>> = line
+                let line_of_trees: Result<Vec<Tree>> = line
                     .chars()
                     .map(|c| {
                         let height = c
@@ -169,7 +169,7 @@ impl Forest {
 }
 
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_1(&self, input: &str) -> Result<String> {
         let forest: Forest = input.parse()?;
         let rows = forest.trees.len();
         let cols = forest.trees[0].len();
@@ -183,12 +183,10 @@ impl Solution for Day {
             }
         }
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_2(&self, input: &str) -> Result<String> {
         let forest: Forest = input.parse()?;
         let rows = forest.trees.len();
         let cols = forest.trees[0].len();
@@ -204,8 +202,6 @@ impl Solution for Day {
             }
         }
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 }

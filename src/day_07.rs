@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use anyhow::{bail, Context};
+use anyhow::{bail, Context, Result};
 use nom::{
     branch::alt,
     bytes::complete::tag,
@@ -124,7 +124,7 @@ fn parse_line(i: &str) -> IResult<&str, ConsoleLine> {
 impl FromStr for ConsoleLine {
     type Err = anyhow::Error;
 
-    fn from_str(s: &str) -> anyhow::Result<Self, Self::Err> {
+    fn from_str(s: &str) -> Result<Self> {
         let parsed_line = all_consuming(parse_line)(s).finish();
 
         match parsed_line {
@@ -163,7 +163,7 @@ impl State {
         current
     }
 
-    fn apply(&mut self, line: ConsoleLine) -> anyhow::Result<()> {
+    fn apply(&mut self, line: ConsoleLine) -> Result<()> {
         match line {
             ConsoleLine::Command(Command::ChangeDirectory(direction)) => {
                 match direction {
@@ -208,8 +208,8 @@ impl State {
 }
 
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
-        let lines: anyhow::Result<Vec<ConsoleLine>> = input.lines().map(str::parse).collect();
+    fn compute_1(&self, input: &str) -> Result<String> {
+        let lines: Result<Vec<ConsoleLine>> = input.lines().map(str::parse).collect();
 
         let mut state = State::new();
 
@@ -224,13 +224,11 @@ impl Solution for Day {
             .filter(|size| *size <= MAX_SIZE)
             .sum();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
-        let lines: anyhow::Result<Vec<ConsoleLine>> = input.lines().map(str::parse).collect();
+    fn compute_2(&self, input: &str) -> Result<String> {
+        let lines: Result<Vec<ConsoleLine>> = input.lines().map(str::parse).collect();
 
         let mut state = State::new();
 
@@ -249,8 +247,6 @@ impl Solution for Day {
             .find(|size| *size >= space_to_free)
             .context("No directory found")?;
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 }

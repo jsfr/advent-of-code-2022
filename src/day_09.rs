@@ -1,6 +1,6 @@
 use std::{fmt::Debug, str::FromStr};
 
-use anyhow::{bail, Context};
+use anyhow::{bail, Context, Result};
 use itertools::Itertools;
 
 use crate::solution::Solution;
@@ -157,9 +157,8 @@ impl FromStr for Instruction {
 
 pub struct Day {}
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
-        let instructions: anyhow::Result<Vec<Instruction>> =
-            input.lines().map(str::parse).collect();
+    fn compute_1(&self, input: &str) -> Result<String> {
+        let instructions: Result<Vec<Instruction>> = input.lines().map(str::parse).collect();
         let instructions = instructions?;
 
         let mut rope = Rope::new(2);
@@ -172,14 +171,11 @@ impl Solution for Day {
 
         let answer = all_points.into_iter().unique().count();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
-        let instructions: anyhow::Result<Vec<Instruction>> =
-            input.lines().map(str::parse).collect();
+    fn compute_2(&self, input: &str) -> Result<String> {
+        let instructions: Result<Vec<Instruction>> = input.lines().map(str::parse).collect();
         let instructions = instructions?;
 
         let mut rope = Rope::new(10);
@@ -192,8 +188,6 @@ impl Solution for Day {
 
         let answer = all_points.into_iter().unique().count();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 }

@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use anyhow::Result;
+
 use crate::solution::Solution;
 
 fn item_value(item: char) -> u32 {
@@ -30,7 +32,7 @@ fn find_shared_item_advanced(lines: &[&str]) -> Option<char> {
 
 pub struct Day {}
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_1(&self, input: &str) -> Result<String> {
         let answer: u32 = input
             .lines()
             .map(|rucksack| {
@@ -43,12 +45,10 @@ impl Solution for Day {
             })
             .sum();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_2(&self, input: &str) -> Result<String> {
         let answer: u32 = input
             .lines()
             .collect::<Vec<&str>>()
@@ -61,8 +61,6 @@ impl Solution for Day {
             })
             .sum();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 }

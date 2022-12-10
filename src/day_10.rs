@@ -77,7 +77,7 @@ fn parse_instruction(s: &str) -> IResult<&str, Instruction> {
 
 pub struct Day {}
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> Result<()> {
+    fn compute_1(&self, input: &str) -> Result<String> {
         let cycle_stops = [20, 60, 100, 140, 180, 220];
 
         let instructions: Vec<Instruction> =
@@ -97,35 +97,37 @@ impl Solution for Day {
 
         let answer: i32 = answer.into_iter().sum();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> Result<()> {
+    fn compute_2(&self, input: &str) -> Result<String> {
         let instructions: Vec<Instruction> =
             input.lines().map(str::parse).rev().collect::<Result<_>>()?;
 
         let mut state = State::new(instructions);
 
-        let mut answer = "".to_string();
-        for _ in 1..=6 {
-            let mut row = "\n".to_string();
-            for pixel in 0..=39 {
-                let sprite = state.x - 1..=state.x + 1;
-                if sprite.contains(&pixel) {
-                    row.push('#');
-                } else {
-                    row.push('.');
-                }
-                state.tick()?;
-            }
+        let answer: String = (1..=6)
+            .into_iter()
+            .map(|_| {
+                let row: String = (0..=39)
+                    .into_iter()
+                    .map(|i| {
+                        let pixel = if state.x - 1 <= i && i <= state.x + 1 {
+                            '■'
+                        } else {
+                            ' '
+                        };
 
-            answer.push_str(&row);
-        }
+                        state.tick()?;
 
-        println!("{answer}");
+                        Ok(pixel)
+                    })
+                    .collect::<Result<_>>()?;
 
-        Ok(())
+                Ok(format!("\n{row}"))
+            })
+            .collect::<Result<_>>()?;
+
+        Ok(answer)
     }
 }

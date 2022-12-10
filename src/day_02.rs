@@ -1,5 +1,6 @@
 use crate::solution::Solution;
 
+use anyhow::Result;
 use Hand::{Paper, Rock, Scissor};
 use Outcome::{Draw, Lose, Win};
 
@@ -74,7 +75,7 @@ fn find_hand(outcome: Outcome, hand: Hand) -> Hand {
 
 pub struct Day {}
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_1(&self, input: &str) -> Result<String> {
         let answer: u32 = input
             .lines()
             .map(|line| {
@@ -90,12 +91,10 @@ impl Solution for Day {
             })
             .sum();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_2(&self, input: &str) -> Result<String> {
         let answer: u32 = input
             .lines()
             .map(|line| {
@@ -111,8 +110,6 @@ impl Solution for Day {
             })
             .sum();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 }

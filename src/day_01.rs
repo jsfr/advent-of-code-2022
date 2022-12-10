@@ -1,11 +1,11 @@
-use anyhow::Context;
+use anyhow::{Context, Result};
 
 use crate::solution::Solution;
 
 pub struct Day {}
 
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_1(&self, input: &str) -> Result<String> {
         let snacks_by_elf = input
             .split("\n\n")
             .map(|chunk| {
@@ -15,9 +15,9 @@ impl Solution for Day {
                         line.parse::<usize>()
                             .context(format!("Failed to parse {line} as a usize"))
                     })
-                    .collect::<anyhow::Result<Vec<_>>>()
+                    .collect::<Result<Vec<_>>>()
             })
-            .collect::<anyhow::Result<Vec<Vec<_>>>>()?;
+            .collect::<Result<Vec<Vec<_>>>>()?;
 
         let answer = snacks_by_elf
             .iter()
@@ -25,12 +25,10 @@ impl Solution for Day {
             .max()
             .context("No fattest elf found")?;
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_2(&self, input: &str) -> Result<String> {
         let snacks_by_elf = input
             .split("\n\n")
             .map(|chunk| {
@@ -40,9 +38,9 @@ impl Solution for Day {
                         line.parse::<usize>()
                             .context(format!("Failed to parse {line} as a usize"))
                     })
-                    .collect::<anyhow::Result<Vec<usize>>>()
+                    .collect::<Result<Vec<usize>>>()
             })
-            .collect::<anyhow::Result<Vec<Vec<usize>>>>()?;
+            .collect::<Result<Vec<Vec<usize>>>>()?;
 
         let mut calories_by_elf = snacks_by_elf
             .iter()
@@ -54,8 +52,6 @@ impl Solution for Day {
 
         let answer: usize = calories_by_elf.into_iter().take(3).sum();
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 }

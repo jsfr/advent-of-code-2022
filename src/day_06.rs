@@ -1,3 +1,4 @@
+use anyhow::Result;
 use itertools::Itertools;
 
 use crate::solution::Solution;
@@ -19,19 +20,15 @@ fn find_marker(input: &str, length: usize) -> usize {
 }
 
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_1(&self, input: &str) -> Result<String> {
         let answer = find_marker(input, 4);
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> anyhow::Result<()> {
+    fn compute_2(&self, input: &str) -> Result<String> {
         let answer = find_marker(input, 14);
 
-        dbg!(answer);
-
-        Ok(())
+        Ok(answer.to_string())
     }
 }
