@@ -4,7 +4,7 @@ use anyhow::{bail, Context, Result};
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::u64,
+    character::complete::u32,
     combinator::{all_consuming, map, rest},
     sequence::{preceded, tuple},
     Finish, IResult,
@@ -55,17 +55,16 @@ struct File {
 
 impl Directory {
     fn size(&mut self) -> usize {
-        match self.calculated_size {
-            Some(size) => size,
-            None => {
-                let file_size: usize = self.files.iter().map(|f| f.size).sum();
-                let dir_size: usize = self.directories.iter_mut().map(Directory::size).sum();
-                let total_size = file_size + dir_size;
+        if let Some(size) = self.calculated_size {
+            size
+        } else {
+            let file_size: usize = self.files.iter().map(|f| f.size).sum();
+            let dir_size: usize = self.directories.iter_mut().map(Directory::size).sum();
+            let total_size = file_size + dir_size;
 
-                self.calculated_size = Some(total_size);
+            self.calculated_size = Some(total_size);
 
-                total_size
-            }
+            total_size
         }
     }
 
@@ -83,9 +82,9 @@ impl Directory {
     }
 }
 
-const MAX_SIZE: usize = 100000;
-const REQUIRED_SIZE: usize = 30000000;
-const AVAILABLE_SPACE: usize = 70000000;
+const MAX_SIZE: usize = 100_000;
+const REQUIRED_SIZE: usize = 30_000_000;
+const AVAILABLE_SPACE: usize = 70_000_000;
 
 fn parse_cmd(i: &str) -> IResult<&str, Command> {
     let cd = map(preceded(tag("$ cd"), rest), |s: &str| {
@@ -107,7 +106,7 @@ fn parse_output(i: &str) -> IResult<&str, Output> {
     let dir = map(preceded(tag("dir"), rest), |s: &str| {
         Output::Directory(s.trim().to_string())
     });
-    let file = map(tuple((u64, rest)), |(size, name): (u64, &str)| {
+    let file = map(tuple((u32, rest)), |(size, name): (u32, &str)| {
         Output::File(size as usize, name.trim().to_string())
     });
 
@@ -150,7 +149,7 @@ impl State {
         };
         let current = vec![];
 
-        Self { tree, current }
+        Self { current, tree }
     }
 
     fn get_current(&mut self) -> &mut Directory {
@@ -196,7 +195,7 @@ impl State {
                     files: vec![],
                     directories: vec![],
                     calculated_size: None,
-                })
+                });
             }
             ConsoleLine::Output(Output::File(size, name)) => {
                 self.get_current().files.push(File { size, _name: name });
@@ -213,7 +212,7 @@ impl Solution for Day {
 
         let mut state = State::new();
 
-        for line in lines?.into_iter() {
+        for line in lines? {
             state.apply(line)?;
         }
 
@@ -232,7 +231,7 @@ impl Solution for Day {
 
         let mut state = State::new();
 
-        for line in lines?.into_iter() {
+        for line in lines? {
             state.apply(line)?;
         }
 
@@ -240,7 +239,7 @@ impl Solution for Day {
         let space_to_free = REQUIRED_SIZE - (AVAILABLE_SPACE - root_size);
         let mut sizes = state.tree.directory_sizes();
 
-        sizes.sort();
+        sizes.sort_unstable();
 
         let answer = sizes
             .into_iter()

@@ -23,7 +23,7 @@ impl Debug for Rope {
 
         let mut lines: Vec<String> = vec![];
         for x in *min_x..=*max_x {
-            let mut line: String = "".into();
+            let mut line: String = String::new();
             for y in *min_y..=*max_y {
                 match (x, y) {
                     (0, 0) if !self.knots.contains(&(x, y)) => {
@@ -58,7 +58,7 @@ impl Rope {
         }
     }
 
-    fn apply_instruction(&mut self, instruction: Instruction) -> Vec<Point> {
+    fn apply_instruction(&mut self, instruction: &Instruction) -> Vec<Point> {
         let mut visited_points = vec![];
         for _ in 0..instruction.1 {
             let visited_point = self.apply_direction(instruction.0);
@@ -99,7 +99,7 @@ impl Rope {
                         (tail.0, tail.1 - 1)
                     }
                 }
-                (2, 1) | (1, 2) | (2, 2) => {
+                (2, 1 | 2) | (1, 2) => {
                     if head.0 > tail.0 && head.1 > tail.1 {
                         (tail.0 + 1, tail.1 + 1)
                     } else if head.0 > tail.0 && head.1 < tail.1 {
@@ -110,7 +110,7 @@ impl Rope {
                         (tail.0 - 1, tail.1 + 1)
                     }
                 }
-                (0, 0) | (1, 0) | (0, 1) | (1, 1) => tail,
+                (0 | 1, 0 | 1) => tail,
                 _ => panic!("failed to move {tail:?}, got {diff:?}"),
             };
 
@@ -136,7 +136,7 @@ impl FromStr for Instruction {
     type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        use Direction::*;
+        use Direction::{Down, Left, Right, Up};
 
         s.split_once(' ')
             .context("failed to parse as an instruction")
@@ -165,7 +165,7 @@ impl Solution for Day {
         let mut all_points = vec![];
 
         for instruction in instructions {
-            let mut points = rope.apply_instruction(instruction);
+            let mut points = rope.apply_instruction(&instruction);
             all_points.append(&mut points);
         }
 
@@ -182,7 +182,7 @@ impl Solution for Day {
         let mut all_points = vec![];
 
         for instruction in instructions {
-            let mut points = rope.apply_instruction(instruction);
+            let mut points = rope.apply_instruction(&instruction);
             all_points.append(&mut points);
         }
 

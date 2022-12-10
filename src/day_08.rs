@@ -162,9 +162,7 @@ impl Forest {
             }
         }
 
-        let answer = top_value * bottom_value * left_value * right_value;
-
-        answer
+        top_value * bottom_value * left_value * right_value
     }
 }
 
@@ -197,7 +195,7 @@ impl Solution for Day {
                 let scenic_value = forest.scenic_value((i, j));
 
                 if scenic_value > answer {
-                    answer = scenic_value
+                    answer = scenic_value;
                 }
             }
         }
