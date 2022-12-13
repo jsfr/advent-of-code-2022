@@ -60,11 +60,9 @@ impl MonkeyGroup {
     }
 }
 
-const NUMBER_OF_ROUNDS: usize = 20;
-
 pub struct Day {}
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> anyhow::Result<String> {
+    fn compute_1(&self, _input: &str) -> anyhow::Result<String> {
         // TODO parse the input instead of hard-coding
         let mut monkey_group = MonkeyGroup {
             monkeys: vec![
@@ -154,7 +152,7 @@ impl Solution for Day {
         Ok(answer.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> anyhow::Result<String> {
+    fn compute_2(&self, _input: &str) -> anyhow::Result<String> {
         let mut monkey_group = MonkeyGroup {
             monkeys: vec![
                 Monkey {
