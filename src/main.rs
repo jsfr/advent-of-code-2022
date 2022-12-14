@@ -9,6 +9,7 @@ mod day_08;
 mod day_09;
 mod day_10;
 mod day_11;
+mod day_13;
 mod solution;
 mod tests;
 
@@ -63,6 +64,7 @@ fn get_day(day: &str) -> Option<Box<dyn Solution>> {
         "09" => Box::new(day_09::Day {}),
         "10" => Box::new(day_10::Day {}),
         "11" => Box::new(day_11::Day {}),
+        "13" => Box::new(day_13::Day {}),
         _ => return None,
     };
 
