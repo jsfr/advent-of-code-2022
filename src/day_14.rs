@@ -60,17 +60,9 @@ impl Stone {
         let (xc, yc) = *coord;
 
         if xs == xe && xe == xc {
-            if (ys <= yc && yc <= ye) || (ye <= yc && yc <= ys) {
-                true
-            } else {
-                false
-            }
+            (ys <= yc && yc <= ye) || (ye <= yc && yc <= ys)
         } else if ys == ye && ye == yc {
-            if (xs <= xc && xc <= xe) || (xe <= xc && xc <= xs) {
-                true
-            } else {
-                false
-            }
+            (xs <= xc && xc <= xe) || (xe <= xc && xc <= xs)
         } else {
             false
         }
@@ -110,7 +102,7 @@ impl Cave {
             return Some(right);
         }
 
-        return None;
+        None
     }
 
     fn drop_sand(&mut self) -> bool {
@@ -118,7 +110,7 @@ impl Cave {
 
         while let Some(next_pos) = self.valid_move(sand) {
             if next_pos.1 <= self.bottom_y {
-                sand = next_pos
+                sand = next_pos;
             } else {
                 // Sand fell out
                 return false;

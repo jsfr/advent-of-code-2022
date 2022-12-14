@@ -1,10 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use std::fs::read_to_string;
-
-    use anyhow::Context;
-
     use crate::solution::Solution;
+    use anyhow::Context;
+    use std::fs::read_to_string;
 
     fn read_input(day: &str) -> String {
         let file = format!("./input/{}", day);
@@ -197,8 +195,8 @@ mod tests {
         let result = day.compute_1(&input).unwrap();
         assert_eq!(result, answer);
 
-        let answer = "";
-        let result = day.compute_2(&input).unwrap();
-        assert_eq!(result, answer);
+        // let answer = "";
+        // let result = day.compute_2(&input).unwrap();
+        // assert_eq!(result, answer);
     }
 }
