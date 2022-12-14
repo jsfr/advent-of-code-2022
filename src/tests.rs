@@ -183,8 +183,8 @@ mod tests {
         let result = day.compute_1(&input).unwrap();
         assert_eq!(result, answer);
 
-        // let answer = todo!();
-        // let result = day.compute_2(&input).unwrap();
-        // assert_eq!(result, answer);
+        let answer = "26712";
+        let result = day.compute_2(&input).unwrap();
+        assert_eq!(result, answer);
     }
 }

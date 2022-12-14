@@ -144,7 +144,7 @@ impl Solution for Day {
             .find_position(|p| **p == dividers[1])
             .context("could not find divider")?;
 
-        let answer = index_1 + index_2 + 2;
+        let answer = (index_1 + 1) * (index_2 + 1);
 
         Ok(answer.to_string())
     }
