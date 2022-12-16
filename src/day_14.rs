@@ -23,7 +23,7 @@ impl Solution for Day {
             })
             .collect::<Result<_>>()?;
         let entry: Coord = (500, 0);
-        let mut cave = Cave::new(stones, entry);
+        let mut cave = Cave::new(stones, entry, false);
 
         while cave.drop_sand() {}
 
@@ -33,7 +33,28 @@ impl Solution for Day {
     }
 
     fn compute_2(&self, input: &str) -> Result<String> {
-        todo!()
+        let stones: Vec<Stone> = input
+            .lines()
+            .flat_map(|line| {
+                line.split(" -> ").tuple_windows().map(|(start, end)| {
+                    let (x, y) = start.split_once(',').context("")?;
+                    let start: Coord = (x.parse()?, y.parse()?);
+
+                    let (x, y) = end.split_once(',').context("")?;
+                    let end: Coord = (x.parse()?, y.parse()?);
+
+                    Ok(Stone { start, end })
+                })
+            })
+            .collect::<Result<_>>()?;
+        let entry: Coord = (500, 0);
+        let mut cave = Cave::new(stones, entry, true);
+
+        while cave.drop_sand() {}
+
+        let answer = cave.sand.len();
+
+        Ok(answer.to_string())
     }
 }
 
@@ -51,6 +72,7 @@ struct Cave {
     stones: Vec<Stone>,
     sand: HashSet<Coord>,
     bottom_y: usize,
+    has_floor: bool,
 }
 
 impl Stone {
@@ -70,7 +92,7 @@ impl Stone {
 }
 
 impl Cave {
-    fn new(stones: Vec<Stone>, sand_entry: Coord) -> Self {
+    fn new(stones: Vec<Stone>, sand_entry: Coord, has_floor: bool) -> Self {
         // TODO remove unwrap
         let bottom_y = stones
             .iter()
@@ -83,10 +105,15 @@ impl Cave {
             stones,
             sand: HashSet::new(),
             bottom_y,
+            has_floor,
         }
     }
 
     fn valid_move(&self, from: Coord) -> Option<Coord> {
+        if self.has_floor && from.1 + 1 >= self.bottom_y + 2 {
+            return None;
+        }
+
         let down = (from.0, from.1 + 1);
         if !self.sand.contains(&down) && !self.stones.iter().any(|s| s.intersects(&down)) {
             return Some(down);
@@ -108,8 +135,15 @@ impl Cave {
     fn drop_sand(&mut self) -> bool {
         let mut sand = self.sand_entry;
 
+        if self.sand.contains(&sand) {
+            // No more sand can fit
+            return false;
+        }
+
         while let Some(next_pos) = self.valid_move(sand) {
-            if next_pos.1 <= self.bottom_y {
+            if next_pos.1 <= self.bottom_y && !self.has_floor {
+                sand = next_pos;
+            } else if self.has_floor {
                 sand = next_pos;
             } else {
                 // Sand fell out
