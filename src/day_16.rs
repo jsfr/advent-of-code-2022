@@ -18,7 +18,7 @@ Valve JJ has flow rate=21; tunnel leads to valve II";
 
 pub struct Day {}
 impl Solution for Day {
-    fn compute_1(&self, input: &str) -> Result<String> {
+    fn compute_1(&self, _input: &str) -> Result<String> {
         let input = INPUT;
         let cave: Cave = input.parse()?;
 
@@ -27,21 +27,33 @@ impl Solution for Day {
 
         let mut runs = vec![Run::new(start, steps)];
 
-        for _ in 1..=steps {
+        for i in 1..=steps {
             runs = runs
                 .into_iter()
-                .flat_map(|run| {
+                .filter_map(|run| {
                     let moves = run.valid_moves(&cave);
-                    moves
-                        .into_iter()
-                        .map(|mmove| {
-                            let mut run = run.clone();
-                            run.make_move(&cave, mmove).unwrap(); // TODO get rid of unwrap
-                            run
-                        })
-                        .collect::<Vec<Run>>()
+
+                    if moves.is_empty() {
+                        // No valid moves throw this option away (can we do this for sure or must we first check against other solutions?)
+                        return None;
+                    }
+
+                    Some(
+                        moves
+                            .into_iter()
+                            .map(|mmove| {
+                                let mut run = run.clone();
+                                run.make_move(&cave, mmove).unwrap(); // TODO get rid of unwrap
+                                run
+                            })
+                            .collect::<Vec<Run>>(),
+                    )
                 })
-                .collect::<Vec<Run>>()
+                .flatten()
+                .collect::<Vec<Run>>();
+
+            dbg!(i);
+            dbg!(runs.len());
         }
 
         let answer = runs.into_iter().max_by_key(|run| run.acc_flow).unwrap();
@@ -49,7 +61,7 @@ impl Solution for Day {
         Ok(answer.acc_flow.to_string())
     }
 
-    fn compute_2(&self, input: &str) -> Result<String> {
+    fn compute_2(&self, _input: &str) -> Result<String> {
         todo!()
     }
 }
@@ -117,7 +129,7 @@ fn parse_tunnels_str(s: &str) -> Result<Vec<String>> {
 
 #[derive(Debug, Clone)]
 struct Run {
-    previous_move: Option<Move>,
+    previous_move: Vec<Move>,
     current: Id,
     is_open: Vec<Id>,
     flow_rate: usize,
@@ -134,7 +146,7 @@ enum Move {
 impl Run {
     fn new(start: Id, steps: usize) -> Self {
         Self {
-            previous_move: None,
+            previous_move: vec![],
             current: start,
             is_open: vec![],
             flow_rate: 0,
@@ -160,12 +172,15 @@ impl Run {
         if let Some(tunnels) = cave.tunnels.get(&self.current) {
             tunnels
                 .iter()
-                .filter_map(|tunnel| match &self.previous_move {
-                    Some(Move::Go { from, .. }) if from == tunnel => None,
-                    _ => Some(Move::Go {
-                        from: self.current.clone(),
-                        to: tunnel.clone(),
-                    }),
+                .filter_map(|tunnel| {
+                    if self.is_cycle(tunnel) {
+                        None
+                    } else {
+                        Some(Move::Go {
+                            from: self.current.clone(),
+                            to: tunnel.clone(),
+                        })
+                    }
                 })
                 .for_each(|mmove| {
                     moves.push(mmove);
@@ -173,6 +188,23 @@ impl Run {
         }
 
         moves
+    }
+
+    fn is_cycle(&self, next: &Id) -> bool {
+        for mmove in self.previous_move.iter().rev() {
+            match mmove {
+                Move::Go { from, .. } if *from == *next => {
+                    return true;
+                }
+                Move::OpenValve => {
+                    return false;
+                }
+                _ => {
+                    continue;
+                }
+            };
+        }
+        return false;
     }
 
     fn make_move(&mut self, cave: &Cave, mmove: Move) -> Result<()> {
@@ -193,7 +225,7 @@ impl Run {
             }
         };
 
-        self.previous_move = Some(mmove);
+        self.previous_move.push(mmove);
 
         Ok(())
     }
